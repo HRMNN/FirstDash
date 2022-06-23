@@ -1,18 +1,26 @@
-import dash
-external_stylesheets = ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
-################################################################################
-# APP INITIALIZATION
-################################################################################
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+from dash import Dash, dcc, html, Input, Output
+import os
 
-# this is needed by gunicorn command in procfile
+
+external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+
+app = Dash(__name__, external_stylesheets=external_stylesheets)
+
 server = app.server
 
-import matplotlib.pyplot as plt
-x = [1,2,3,4,5,6,7,8,9]
-y = [7,3,7,4,3,8,4,8,3]
-plt.title("Example")
-plt.scatter(x = x, y = y)
-plt.ylabel("Y")
-plt.xlabel("X")
-plt.show()
+app.layout = html.Div([
+    html.H2('Hello World'),
+    dcc.Dropdown(['LA', 'NYC', 'MTL'],
+        'LA',
+        id='dropdown'
+    ),
+    html.Div(id='display-value')
+])
+
+@app.callback(Output('display-value', 'children'),
+                [Input('dropdown', 'value')])
+def display_value(value):
+    return f'You have selected {value}'
+
+if __name__ == '__main__':
+    app.run_server(debug=True)
